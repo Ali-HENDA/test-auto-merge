@@ -1,0 +1,29 @@
+version: 2.1
+
+workflows:
+  testing:
+    jobs:
+      - validate-dependencies
+      - install-dependencies
+
+jobs:
+  validate-dependencies:
+    docker:
+      - image: cimg/php:8.3
+    steps:
+      - checkout
+      - run: composer validate --no-check-publish -n
+
+  install-dependencies:
+    docker:
+      - image: cimg/php:8.3
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - composer-v2-dependencies-{{ checksum "composer.lock" }}
+      - run: composer install -n --prefer-dist --no-progress --no-suggest
+      - save_cache:
+          paths:
+            - ./vendor
+          key: composer-v2-dependencies-{{ checksum "composer.lock" }}
