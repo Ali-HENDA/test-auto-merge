@@ -2,7 +2,7 @@
   "name": "test/dependabot-playground",
   "require": {
     "symfony/console": "7.3.0",
-    "twig/twig": "3.21.0",
+    "twig/twig": "3.21.1",
     "doctrine/orm": "3.5.0",
     "doctrine/dbal": "3.8.2",
     "phpunit/phpunit": "12.0.0",
