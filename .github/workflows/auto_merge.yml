@@ -1,35 +1,39 @@
-name: Dependabot auto-approve & auto-merge
+name: Dependabot auto-approve & auto-merge (major only)
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
+    types: [opened, synchronize, reopened]
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: write          # nécessaire pour gh pr merge --auto
+  pull-requests: write     # nécessaire pour gh pr review --approve
 
 jobs:
-  automerge:
+  dependabot-major:
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' }}
 
     steps:
-      - name: Fetch metadata
-        id: meta
-        uses: dependabot/fetch-metadata@v2.2.0
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@d7267f607e9d3fb96fc2fbe83e0af444713e90b7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Approve PR (major only)
-        if: steps.meta.outputs.update-type == 'version-update:semver-major'
+      - name: Skip if not a major update
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        run: |
+          echo "This is not a major update, skipping."
+          exit 0
+
+      - name: Auto-approve PR
         run: gh pr review --approve "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Enable auto-merge (major after approve)
-        if: steps.meta.outputs.update-type == 'version-update:semver-major'
-        run: gh pr merge --auto --squash "$PR_URL"
+      - name: Enable auto-merge (merge commit)
+        run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
