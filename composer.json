@@ -5,7 +5,7 @@
     "twig/twig": "^3.21",
     "doctrine/orm": "^3.5",
     "doctrine/dbal": "^4.3",
-    "phpunit/phpunit": "^8.0",
+    "phpunit/phpunit": "^12.3",
     "lcobucci/jwt": "^5.5",
     "league/flysystem": "^3.30"
    }
