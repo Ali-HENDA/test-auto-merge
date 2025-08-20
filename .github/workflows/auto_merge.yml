@@ -20,11 +20,11 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Skip if not a major update
+      - name: Skip if major update
         if: steps.metadata.outputs.update-type == 'version-update:semver-major'
         run: |
           echo "This is a major update, skipping."
-          exit 0
+          exit 1
 
       - name: Auto-approve PR
         run: gh pr review --approve "$PR_URL"
