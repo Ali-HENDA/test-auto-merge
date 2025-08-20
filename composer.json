@@ -3,7 +3,7 @@
    "require": {
     "symfony/console": "^7.3",
     "twig/twig": "^3.21",
-    "doctrine/orm": "^2.13",
+    "doctrine/orm": "^3.5",
     "doctrine/dbal": "^3.0",
     "phpunit/phpunit": "^8.0",
     "lcobucci/jwt": "^5.5",
