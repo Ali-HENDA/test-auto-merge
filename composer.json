@@ -2,11 +2,11 @@
   "name": "test/dependabot-playground",
   "require": {
     "guzzlehttp/guzzle": "^7.7",
-    "nesbot/carbon": "^2.68",
+    "nesbot/carbon": "2.68.0",
     "fakerphp/faker": "^1.20",
-    "symfony/console": "~7.0",
-    "phpmailer/phpmailer": "~6.10.0",
-    "monolog/monolog": "^1.0",
+    "symfony/console": "7.0.0",
+    "phpmailer/phpmailer": "6.10.0",
+    "monolog/monolog": "1.0.0",
     "ramsey/uuid": "^4.6"
   }
 }
