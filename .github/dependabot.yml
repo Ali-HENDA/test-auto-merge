@@ -16,3 +16,5 @@ updates:
       symfony:
         patterns:
           - "symfony/*"
+        update-types:
+          - "major"
