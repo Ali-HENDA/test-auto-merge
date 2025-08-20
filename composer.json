@@ -1,9 +1,12 @@
 {
   "name": "test/dependabot-playground",
-  "require": {
-    "symfony/console": "^7.3",
-    "monolog/monolog": "^2.9",
-    "psr/log": "^1.1",
-    "guzzlehttp/guzzle": "^6.5.0"
-  }
+   "require": {
+    "symfony/console": "^6.0",
+    "twig/twig": "^2.0",
+    "doctrine/orm": "^2.13",
+    "doctrine/dbal": "^3.0",
+    "phpunit/phpunit": "^8.0",
+    "lcobucci/jwt": "^3.0",
+    "league/flysystem": "^1.0"
+   }
 }
