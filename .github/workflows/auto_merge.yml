@@ -1,44 +1,35 @@
-name: Dependabot auto-approve & auto-merge (GitHub App)
+name: Dependabot auto-approve & auto-merge majors
 
 on:
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
 
-permissions: {}
+permissions:
+  pull-requests: write
+  contents: write
 
 jobs:
   automerge:
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' }}
+    if: github.actor == 'dependabot[bot]'
 
     steps:
-      - name: Get GitHub App token
-        id: app-token
-        uses: actions/github-app-token@v1
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: ${{ github.event.repository.name }}
-
-      - name: Fetch metadata
+      - name: Fetch Dependabot metadata
         id: meta
         uses: dependabot/fetch-metadata@v2
         with:
-          github-token: ${{ steps.app-token.outputs.token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Approve PR
-        if: |
-          steps.meta.outputs.update-type == 'version-update:semver-major'
-        run: gh pr review "$PR_URL" --approve -b "Auto-approved by GitHub App"
+        if: steps.meta.outputs.update-type == 'version-update:semver-major'
+        run: gh pr review "$PR_URL" --approve -b "Auto-approved (major) by workflow"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable auto-merge
-        if: |
-          steps.meta.outputs.update-type == 'version-update:semver-major'
+        if: steps.meta.outputs.update-type == 'version-update:semver-major'
         run: gh pr merge "$PR_URL" --auto --squash
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
