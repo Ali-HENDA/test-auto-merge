@@ -2,7 +2,11 @@ name: Dependabot Auto-merge (Minor/Patch Only)
 
 on:
   pull_request_target:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
 
 permissions:
   contents: write
@@ -10,7 +14,7 @@ permissions:
 
 jobs:
   automerge:
-    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    if: github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Extract versions and determine update type
@@ -18,13 +22,10 @@ jobs:
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          echo "PR Title: $PR_TITLE"
-
           VERSION_MATCH=$(echo "$PR_TITLE" | grep -oP 'from \S*(\d+(\.\d+)+)\S* to \S*(\d+(\.\d+)+)\S*')
           
           if [ -z "$VERSION_MATCH" ]; then
-            echo "Could not extract versions from title. Skipping auto-merge for safety."
-            echo "level=unknown" >> "$GITHUB_OUTPUT"
+            echo "is_major=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           
@@ -32,35 +33,22 @@ jobs:
           NEW_VERSION=$(echo "$VERSION_MATCH" | awk '{print $3}' | grep -oP '\d+(\.\d+)+')
 
           OLD_MAJOR=$(echo "$OLD_VERSION" | cut -d'.' -f1)
-          OLD_MINOR=$(echo "$OLD_VERSION" | cut -d'.' -f2)
-          OLD_PATCH=$(echo "$OLD_VERSION" | cut -d'.' -f3)
-
           NEW_MAJOR=$(echo "$NEW_VERSION" | cut -d'.' -f1)
-          NEW_MINOR=$(echo "$NEW_VERSION" | cut -d'.' -f2)
-          NEW_PATCH=$(echo "$NEW_VERSION" | cut -d'.' -f3)
 
-          if [ "$OLD_MAJOR" != "$NEW_MAJOR" ]; then
-            level=major
-          elif [ "$OLD_MINOR" != "$NEW_MINOR" ]; then
-            level=minor
-          elif [ "$OLD_PATCH" != "$NEW_PATCH" ]; then
-            level=patch
+          if [ "$OLD_MAJOR" == "$NEW_MAJOR" ]; then
+            echo "is_major=false" >> "$GITHUB_OUTPUT"
           else
-            level=none
+            echo "is_major=true" >> "$GITHUB_OUTPUT"
           fi
-
-          echo "Old: $OLD_VERSION → New: $NEW_VERSION → $level"
-          echo "level=$level" >> "$GITHUB_OUTPUT"
-
+          
       - name: Approve and enable auto-merge for minor/patch updates
-        if: steps.version_check.outputs.level == 'minor' || steps.version_check.outputs.level == 'patch'
+        if: steps.version_check.outputs.is_major == 'false'
         run: |
-          echo "Approving and enabling auto-merge..."
-          gh pr review --approve ${{ github.event.pull_request.html_url }}
-          gh pr merge --auto --merge ${{ github.event.pull_request.html_url }}
+          gh pr review --approve ${{ github.event.pull_request.number }}
+          gh pr merge --auto --merge ${{ github.event.pull_request.number }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Notify on major update
-        if: steps.version_check.outputs.level == 'major'
+        if: steps.version_check.outputs.is_major == 'true'
         run: echo "Skipping auto-merge: Major version update detected."
