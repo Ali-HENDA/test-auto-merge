@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   automerge:
-    if: github.event.pull_request.user.login == 'dependabot[bot]
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Extract versions and determine update type
@@ -44,8 +44,8 @@ jobs:
       - name: Approve and enable auto-merge for minor/patch updates
         if: steps.version_check.outputs.is_major == 'false'
         run: |
-          gh pr review --approve ${{ github.event.pull_request.number }}
-          gh pr merge --auto --merge ${{ github.event.pull_request.number }}
+          gh pr review --approve ${{ github.event.pull_request.html_url }}
+          gh pr merge --auto --merge ${{ github.event.pull_request.html_url }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
