@@ -2,7 +2,7 @@
   "name": "test/dependabot-playground-alt",
   "require": {
     "guzzlehttp/guzzle": "^7.8",
-    "nesbot/carbon": "^2.70",
+    "nesbot/carbon": "^3.10",
     "fakerphp/faker": "^1.21",
     "symfony/http-foundation": "^7.1",
     "ramsey/uuid": "^4.7",
