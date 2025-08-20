@@ -4,7 +4,7 @@
     "guzzlehttp/guzzle": "^7.7",
     "nesbot/carbon": "^2.68",
     "fakerphp/faker": "^1.20",
-    "symfony/console": "~6.4",
+    "symfony/console": "^7.0",
     "ramsey/uuid": "^4.6",
     "phpmailer/phpmailer": "^6.8"
   }
