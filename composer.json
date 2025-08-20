@@ -1,12 +1,11 @@
 {
-  "name": "test/dependabot-playground",
+  "name": "test/dependabot-playground-alt",
   "require": {
-    "symfony/console": "^7.3",
-    "twig/twig": "^3.21",
-    "doctrine/orm": "^3.5",
-    "doctrine/dbal": "^4.3.2",
-    "phpunit/phpunit": "^12.0",
-    "lcobucci/jwt": "^5.4",
-    "league/flysystem": "^3.28"
+    "guzzlehttp/guzzle": "^7.8",
+    "nesbot/carbon": "^2.70",
+    "fakerphp/faker": "^1.21",
+    "symfony/http-foundation": "^7.1",
+    "ramsey/uuid": "^4.7",
+    "phpmailer/phpmailer": "^6.9"
   }
 }
