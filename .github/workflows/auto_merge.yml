@@ -5,8 +5,8 @@ on:
     types: [opened, synchronize, reopened]
 
 permissions:
-  contents: write          # nécessaire pour gh pr merge --auto
-  pull-requests: write     # nécessaire pour gh pr review --approve
+  contents: write
+  pull-requests: write
 
 jobs:
   dependabot-major:
