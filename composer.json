@@ -6,7 +6,7 @@
     "fakerphp/faker": "^1.20",
     "symfony/console": "~7.0",
     "phpmailer/phpmailer": "~6.8.0",
-    "monolog/monolog": "^1.0",
+    "monolog/monolog": "^3.9",
     "ramsey/uuid": "^4.6"
   }
 }
