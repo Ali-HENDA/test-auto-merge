@@ -1,0 +1,64 @@
+name: Dependabot auto-approve & auto-merge (minor/patch only)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  dependabot-minor-patch:
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@08eff52bf64351f401fb50d4972fa95b9f2c2d1b
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Detect update type manually
+        id: detect
+        run: |
+          old="${{ steps.metadata.outputs.previous-version }}"
+          new="${{ steps.metadata.outputs.new-version }}"
+
+          echo "Old version: $old"
+          echo "New version: $new"
+
+          # extraire major/minor/patch
+          major_old=$(echo $old | cut -d. -f1)
+          major_new=$(echo $new | cut -d. -f1)
+          minor_old=$(echo $old | cut -d. -f2)
+          minor_new=$(echo $new | cut -d. -f2)
+
+          if [ "$major_old" != "$major_new" ]; then
+            echo "type=major" >> $GITHUB_OUTPUT
+          elif [ "$minor_old" != "$minor_new" ]; then
+            echo "type=minor" >> $GITHUB_OUTPUT
+          else
+            echo "type=patch" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Skip if major update
+        if: steps.detect.outputs.type == 'major'
+        run: |
+          echo "This is a major update, skipping."
+          exit 0
+
+      - name: Auto-approve PR
+        if: steps.detect.outputs.type == 'minor' || steps.detect.outputs.type == 'patch'
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge (merge commit)
+        if: steps.detect.outputs.type == 'minor' || steps.detect.outputs.type == 'patch'
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
