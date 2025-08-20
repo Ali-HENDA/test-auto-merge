@@ -51,4 +51,4 @@ jobs:
 
       - name: Notify on major update
         if: steps.version_check.outputs.is_major == 'true'
-        run: echo "Skipping auto-merge: Major version update detected."
+        run: echo "Skipping auto-merge major version update detected."
