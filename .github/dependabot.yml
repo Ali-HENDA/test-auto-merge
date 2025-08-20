@@ -12,6 +12,11 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    automerge:
+      - dependency-type: "all"
+        update-types:
+          - "minor"
+          - "patch"
     groups:
       symfony:
         patterns:
