@@ -1,11 +1,11 @@
 {
-  "name": "test/dependabot-playground-alt",
+  "name": "test/dependabot-playground",
   "require": {
-    "guzzlehttp/guzzle": "^7.8",
-    "nesbot/carbon": "^2.70",
-    "fakerphp/faker": "^1.21",
-    "symfony/console": "^7.0",
-    "ramsey/uuid": "^4.7",
-    "phpmailer/phpmailer": "^6.9"
+    "guzzlehttp/guzzle": "^7.7",
+    "nesbot/carbon": "^2.68",
+    "fakerphp/faker": "^1.20",
+    "symfony/console": "^6.4",
+    "ramsey/uuid": "^4.6",
+    "phpmailer/phpmailer": "^6.8"
   }
 }
