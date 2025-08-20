@@ -1,7 +1,7 @@
 {
   "name": "test/dependabot-playground",
   "require": {
-    "symfony/console": "^7.3",
+    "symfony/console": "^6.0",
     "monolog/monolog": "^2.9",
     "psr/log": "^1.1",
     "guzzlehttp/guzzle": "^6.5.0"
