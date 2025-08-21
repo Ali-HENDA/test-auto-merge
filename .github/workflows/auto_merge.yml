@@ -37,4 +37,14 @@ jobs:
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Notify failure
+        if: failure()
+        run: |
+          MSG="❌ Auto-merge failed for Dependabot PR: $PR_URL"
+          curl -X POST -d "{\"text\": \"${MSG}\"}" \
+            -H "Content-Type: application/json" \
+            ${{ secrets.GOOGLE_WEBHOOK_STAGING }}
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
 
