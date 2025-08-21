@@ -13,3 +13,6 @@ jobs:
       - checkout
       - run: composer validate --no-check-publish -n
       - run: composer install -n --prefer-dist --no-progress --no-suggest
+      - run: |
+          echo "Failing CI for test"
+          exit 1
