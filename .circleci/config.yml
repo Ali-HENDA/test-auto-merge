@@ -11,5 +11,7 @@ jobs:
       - image: cimg/php:8.3
     steps:
       - checkout
+      - run: sleep 20
       - run: composer validate --no-check-publish -n
       - run: composer install -n --prefer-dist --no-progress --no-suggest
+    
