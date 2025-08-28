@@ -1,12 +1,15 @@
 version: 2.1
 
 workflows:
-  test-and-release:
+  test:
     jobs:
       - build
-      - semantic-release:
-          requires:
-            - build
+
+  release:
+    when:
+      equal: [ << pipeline.git.branch >>, "main" ]
+    jobs:
+      - semantic-release
 
 jobs:
   build:
@@ -23,16 +26,17 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "Install semantic-release"
+          name: "Install semantic-release locally"
           command: |
-            npm install -g semantic-release \
+            npm init -y
+            npm install semantic-release \
               @semantic-release/commit-analyzer \
               @semantic-release/release-notes-generator \
               @semantic-release/github
       - run:
           name: "Run semantic-release"
           command: |
-            cat > .releaserc.json \<<'EOF'
+            cat > .releaserc.json <<'EOF'
             {
               "branches": ["main"],
               "plugins": [
@@ -55,4 +59,4 @@ jobs:
             }
             EOF
 
-            semantic-release --branches $CIRCLE_BRANCH --debug
+            npx semantic-release --branches $CIRCLE_BRANCH --debug
