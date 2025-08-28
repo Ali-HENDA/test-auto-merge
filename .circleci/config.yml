@@ -32,7 +32,7 @@ jobs:
       - run:
           name: "Run semantic-release"
           command: |
-            cat > .releaserc.json <<'EOF'
+            cat > .releaserc.json \<<'EOF'
             {
               "branches": ["main"],
               "plugins": [
