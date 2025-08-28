@@ -33,6 +33,7 @@ jobs:
               @semantic-release/commit-analyzer \
               @semantic-release/release-notes-generator \
               @semantic-release/github
+              conventional-changelog-conventionalcommits
       - run:
           name: "Configure Git remote with GH_TOKEN"
           command: |
