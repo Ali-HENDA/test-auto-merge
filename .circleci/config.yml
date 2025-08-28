@@ -43,7 +43,7 @@ jobs:
                 ["@semantic-release/commit-analyzer", {
                   "preset": "conventionalcommits",
                   "releaseRules": [
-                    { "subject": "bump", "release": false },
+                    { "subject": "Bump", "release": false },
                     { "type": "docs", "release": "patch" },
                     { "type": "refactor", "release": "minor" },
                     { "type": "chore", "release": "patch" },
@@ -55,7 +55,7 @@ jobs:
                 "@semantic-release/release-notes-generator",
                 "@semantic-release/github"
               ],
-              "tagFormat": "v${version}"
+              "tagFormat": "v\${version}"
             }
             EOF
 
