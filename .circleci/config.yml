@@ -1,9 +1,12 @@
 version: 2.1
 
 workflows:
-  testing:
+  test-and-release:
     jobs:
       - build
+      - semantic-release:
+          requires:
+            - build
 
 jobs:
   build:
@@ -11,7 +14,45 @@ jobs:
       - image: cimg/php:8.3
     steps:
       - checkout
-      - run: sleep 20
       - run: composer validate --no-check-publish -n
       - run: composer install -n --prefer-dist --no-progress --no-suggest
-    
+
+  semantic-release:
+    docker:
+      - image: cimg/node:20.9
+    steps:
+      - checkout
+      - run:
+          name: "Install semantic-release"
+          command: |
+            npm install -g semantic-release \
+              @semantic-release/commit-analyzer \
+              @semantic-release/release-notes-generator \
+              @semantic-release/github
+      - run:
+          name: "Run semantic-release"
+          command: |
+            cat > .releaserc.json <<'EOF'
+            {
+              "branches": ["main"],
+              "plugins": [
+                ["@semantic-release/commit-analyzer", {
+                  "preset": "conventionalcommits",
+                  "releaseRules": [
+                    { "subject": "bump", "release": false },
+                    { "type": "docs", "release": "patch" },
+                    { "type": "refactor", "release": "minor" },
+                    { "type": "chore", "release": "patch" },
+                    { "type": "test", "release": "patch" },
+                    { "type": "perf", "release": "minor" },
+                    { "type": "ci", "release": "patch" }
+                  ]
+                }],
+                "@semantic-release/release-notes-generator",
+                "@semantic-release/github"
+              ],
+              "tagFormat": "v${version}"
+            }
+            EOF
+
+            semantic-release --branches $CIRCLE_BRANCH --debug
