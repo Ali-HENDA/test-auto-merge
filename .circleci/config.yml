@@ -34,6 +34,12 @@ jobs:
               @semantic-release/release-notes-generator \
               @semantic-release/github
       - run:
+          name: "Configure Git remote with GH_TOKEN"
+          command: |
+            git remote set-url origin https://$GH_TOKEN@github.com/Ali-HENDA/test-auto-merge.git
+            git config user.name "ci-bot"
+            git config user.email "ci-bot@users.noreply.github.com"
+      - run:
           name: "Run semantic-release"
           command: |
             cat > .releaserc.json \<<EOF
