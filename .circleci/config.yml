@@ -20,50 +20,50 @@ jobs:
       - run: composer validate --no-check-publish -n
       - run: composer install -n --prefer-dist --no-progress --no-suggest
 
-  semantic-release:
-    docker:
-      - image: cimg/node:20.9
-    steps:
-      - checkout
-      - run:
-          name: "Install semantic-release locally"
-          command: |
-            npm init -y
-            npm install semantic-release \
-              @semantic-release/commit-analyzer \
-              @semantic-release/release-notes-generator \
-              @semantic-release/github \
-              conventional-changelog-conventionalcommits
-      - run:
-          name: "Configure Git remote with GH_TOKEN"
-          command: |
-            git remote set-url origin https://$GH_TOKEN@github.com/Ali-HENDA/test-auto-merge.git
-            git config user.name "ci-bot"
-            git config user.email "ci-bot@users.noreply.github.com"
-      - run:
-          name: "Run semantic-release"
-          command: |
-            cat > .releaserc.json \<<EOF
-            {
-              "branches": ["main"],
-              "plugins": [
-                ["@semantic-release/commit-analyzer", {
-                  "preset": "conventionalcommits",
-                  "releaseRules": [
-                    { "subject": "Bump", "release": false },
-                    { "type": "docs", "release": "patch" },
-                    { "type": "refactor", "release": "minor" },
-                    { "type": "chore", "release": "patch" },
-                    { "type": "test", "release": "patch" },
-                    { "type": "perf", "release": "minor" },
-                    { "type": "ci", "release": "patch" }
-                  ]
-                }],
-                "@semantic-release/release-notes-generator",
-                "@semantic-release/github"
-              ],
-              "tagFormat": "v\${version}"
-            }
-            EOF
+  # semantic-release:
+  #   docker:
+  #     - image: cimg/node:20.9
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: "Install semantic-release locally"
+  #         command: |
+  #           npm init -y
+  #           npm install semantic-release \
+  #             @semantic-release/commit-analyzer \
+  #             @semantic-release/release-notes-generator \
+  #             @semantic-release/github \
+  #             conventional-changelog-conventionalcommits
+  #     - run:
+  #         name: "Configure Git remote with GH_TOKEN"
+  #         command: |
+  #           git remote set-url origin https://$GH_TOKEN@github.com/Ali-HENDA/test-auto-merge.git
+  #           git config user.name "ci-bot"
+  #           git config user.email "ci-bot@users.noreply.github.com"
+  #     - run:
+  #         name: "Run semantic-release"
+  #         command: |
+  #           cat > .releaserc.json \<<EOF
+  #           {
+  #             "branches": ["main"],
+  #             "plugins": [
+  #               ["@semantic-release/commit-analyzer", {
+  #                 "preset": "conventionalcommits",
+  #                 "releaseRules": [
+  #                   { "subject": "Bump", "release": false },
+  #                   { "type": "docs", "release": "patch" },
+  #                   { "type": "refactor", "release": "minor" },
+  #                   { "type": "chore", "release": "patch" },
+  #                   { "type": "test", "release": "patch" },
+  #                   { "type": "perf", "release": "minor" },
+  #                   { "type": "ci", "release": "patch" }
+  #                 ]
+  #               }],
+  #               "@semantic-release/release-notes-generator",
+  #               "@semantic-release/github"
+  #             ],
+  #             "tagFormat": "v\${version}"
+  #           }
+  #           EOF
 
-            npx semantic-release --branches $CIRCLE_BRANCH --debug
+  #           npx semantic-release --branches $CIRCLE_BRANCH --debug
