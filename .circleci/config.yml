@@ -5,11 +5,11 @@ workflows:
     jobs:
       - build
 
-  release:
-    when:
-      equal: [ << pipeline.git.branch >>, "main" ]
-    jobs:
-      - semantic-release
+  # release:
+  #   when:
+  #     equal: [ << pipeline.git.branch >>, "main" ]
+  #   jobs:
+  #     - semantic-release
 
 jobs:
   build:
