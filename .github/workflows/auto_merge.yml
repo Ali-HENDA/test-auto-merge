@@ -36,7 +36,7 @@ jobs:
         run: gh pr review --approve "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.MERGE_BOT_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
 
       - name: Enable auto-merge
         if: |
