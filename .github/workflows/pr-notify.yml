@@ -1,0 +1,23 @@
+name: Notify Chat on PR
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send custom message to Google Chat
+        env:
+          WEBHOOK_URL: ${{ secrets.CHAT_WEBHOOK_URL }}
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_URL="${{ github.event.pull_request.html_url }}"
+          AUTHOR="${{ github.actor }}"
+          REPO="${{ github.repository }}"
+          MESSAGE="🚀 Nouvelle PR sur *${REPO}* par ${AUTHOR}\n👉 [${PR_TITLE}](${PR_URL})"
+          
+          curl -X POST -H "Content-Type: application/json" \
+            -d "{\"text\": \"${MESSAGE}\"}" \
+            "$WEBHOOK_URL"
