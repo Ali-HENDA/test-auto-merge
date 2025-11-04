@@ -16,7 +16,7 @@ jobs:
           PR_URL="${{ github.event.pull_request.html_url }}"
           AUTHOR="${{ github.actor }}"
           REPO="${{ github.repository }}"
-          MESSAGE="🚀 Nouvelle PR sur *${REPO}* par ${AUTHOR}\n👉 [${PR_TITLE}](${PR_URL})"
+          MESSAGE="Nouvelle PR sur *${REPO}* par ${AUTHOR}\n👉 [${PR_TITLE}](${PR_URL})"
           
           curl -X POST -H "Content-Type: application/json" \
             -d "{\"text\": \"${MESSAGE}\"}" \
