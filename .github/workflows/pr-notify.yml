@@ -1,0 +1,39 @@
+name: Notify Chat on PR Events
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send message to Google Chat
+        env:
+          WEBHOOK_URL: ${{ secrets.CHAT_WEBHOOK_URL }}
+        run: |
+          EVENT_NAME="${{ github.event_name }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_URL="${{ github.event.pull_request.html_url }}"
+          ACTOR="${{ github.event.pull_request.user.login }}"
+          REVIEW_STATE="${{ github.event.review.state }}"
+
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            MESSAGE="🛠️ *${ACTOR}* a créé une nouvelle PR : [${PR_TITLE}](${PR_URL})"
+          elif [ "$EVENT_NAME" = "pull_request_review" ]; then
+            if [ "$REVIEW_STATE" = "approved" ]; then
+              MESSAGE="✅ *${ACTOR}*, ta PR a été approuvée : [${PR_TITLE}](${PR_URL})"
+            elif [ "$REVIEW_STATE" = "changes_requested" ]; then
+              MESSAGE="⚠️ *${ACTOR}*, des changements ont été demandés pour ta PR : [${PR_TITLE}](${PR_URL})"
+            else
+              MESSAGE="💬 *${ACTOR}*, un commentaire a été ajouté pour ta PR : [${PR_TITLE}](${PR_URL})"
+            fi
+          fi
+
+          if [ -n "$MESSAGE" ]; then
+            curl -X POST -H "Content-Type: application/json" \
+              -d "{\"text\": \"${MESSAGE}\"}" \
+              "$WEBHOOK_URL"
+          fi
