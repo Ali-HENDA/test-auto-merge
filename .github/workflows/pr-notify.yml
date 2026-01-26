@@ -17,18 +17,19 @@ jobs:
           EVENT_NAME="${{ github.event_name }}"
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_URL="${{ github.event.pull_request.html_url }}"
-          ACTOR="${{ github.event.pull_request.user.login }}"
+          ACTOR="${{ github.actor }}"
           REVIEW_STATE="${{ github.event.review.state }}"
+          REVIEWER="${{ github.event.review.user.login }}"
 
           if [ "$EVENT_NAME" = "pull_request" ]; then
-            MESSAGE="🛠️ *${ACTOR}* a créé une nouvelle PR : [${PR_TITLE}](${PR_URL})"
+            MESSAGE="Nouvelle PR ouverte par ${ACTOR} : [${PR_TITLE}](${PR_URL})"
           elif [ "$EVENT_NAME" = "pull_request_review" ]; then
             if [ "$REVIEW_STATE" = "approved" ]; then
-              MESSAGE="✅ *${ACTOR}*, ta PR a été approuvée : [${PR_TITLE}](${PR_URL})"
+              MESSAGE="✅ ${REVIEWER} a approuvé la PR : [${PR_TITLE}](${PR_URL})"
             elif [ "$REVIEW_STATE" = "changes_requested" ]; then
-              MESSAGE="⚠️ *${ACTOR}*, des changements ont été demandés pour ta PR : [${PR_TITLE}](${PR_URL})"
+              MESSAGE="⚠️ ${REVIEWER} a demandé des changements sur : [${PR_TITLE}](${PR_URL})"
             else
-              MESSAGE="💬 *${ACTOR}*, un commentaire a été ajouté pour ta PR : [${PR_TITLE}](${PR_URL})"
+              MESSAGE="💬 ${REVIEWER} a commenté la PR : [${PR_TITLE}](${PR_URL})"
             fi
           fi
 
