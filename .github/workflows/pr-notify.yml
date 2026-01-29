@@ -17,7 +17,7 @@ jobs:
           EVENT_NAME="${{ github.event_name }}"
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_URL="${{ github.event.pull_request.html_url }}"
-          ACTOR="${{ github.actor }}"
+          ACTOR="${{ github.github.event.pull_request.user.login }}"
           REVIEW_STATE="${{ github.event.review.state }}"
           REVIEWER="${{ github.event.review.user.login }}"
 
@@ -31,6 +31,11 @@ jobs:
             else
               MESSAGE="💬 ${REVIEWER} a commenté la PR : [${PR_TITLE}](${PR_URL})"
             fi
+          fi
+
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "WEBHOOK_URL is empty, skipping notification"
+            exit 0
           fi
 
           if [ -n "$MESSAGE" ]; then
