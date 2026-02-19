@@ -19,12 +19,11 @@ jobs:
         run: |
           EVENT_NAME="${{ github.event_name }}"
           ACTOR="${{ github.actor }}"
-
+          REVIEW_STATE="${{ github.event.review.state }}"
+          REVIEWER="${{ github.event.review.user.login }}"
           MESSAGE=""
 
-          # Déterminer le contexte PR (PR directe ou commentaire sur PR)
           if [ "$EVENT_NAME" = "issue_comment" ]; then
-            # On ne notifie que si c’est bien une PR (pas une issue simple)
             if [ "${{ github.event.issue.pull_request }}" = "" ]; then
               echo "Not a PR comment, skipping"
               exit 0
@@ -44,9 +43,6 @@ jobs:
               ;;
 
             pull_request_review)
-              REVIEW_STATE="${{ github.event.review.state }}"
-              REVIEWER="${{ github.event.review.user.login }}"
-
               case "$REVIEW_STATE" in
                 approved)
                   MESSAGE="✅ ${REVIEWER} a approuvé la PR : ${PR_LINK}"
