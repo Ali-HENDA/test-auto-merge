@@ -16,17 +16,22 @@ jobs:
         env:
           WEBHOOK_URL: ${{ secrets.CHAT_WEBHOOK_URL }}
         run: |
-          if [ "$EVENT_NAME" = "pull_request" ]; then
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          PR_URL="${{ github.event.pull_request.html_url }}"
-          ACTOR="${{ github.github.event.actor }}"
-          REVIEW_STATE="${{ github.event.review.state }}"
-          REVIEWER="${{ github.event.review.user.login }}"
-          PR_LINK="[${PR_TITLE}](${PR_URL})"
+          EVENT_NAME="${{ github.event_name }}"
+          ACTOR="${{ github.actor }}"
 
           if [ "$EVENT_NAME" = "pull_request" ]; then
+            PR_TITLE="${{ github.event.pull_request.title }}"
+            PR_URL="${{ github.event.pull_request.html_url }}"
+            PR_LINK="[${PR_TITLE}](${PR_URL})"
             MESSAGE="Nouvelle PR ouverte par ${ACTOR} : ${PR_LINK}"
+
           elif [ "$EVENT_NAME" = "pull_request_review" ]; then
+            PR_TITLE="${{ github.event.pull_request.title }}"
+            PR_URL="${{ github.event.pull_request.html_url }}"
+            PR_LINK="[${PR_TITLE}](${PR_URL})"
+            REVIEW_STATE="${{ github.event.review.state }}"
+            REVIEWER="${{ github.event.review.user.login }}"
+
             if [ "$REVIEW_STATE" = "approved" ]; then
               MESSAGE="✅ ${REVIEWER} a approuvé la PR : ${PR_LINK}"
             elif [ "$REVIEW_STATE" = "changes_requested" ]; then
@@ -34,6 +39,12 @@ jobs:
             else
               MESSAGE="💬 ${REVIEWER} a commenté la PR : ${PR_LINK}"
             fi
+
+          elif [ "$EVENT_NAME" = "issue_comment" ]; then
+            PR_TITLE="${{ github.event.issue.title }}"
+            PR_URL="${{ github.event.issue.html_url }}"
+            PR_LINK="[${PR_TITLE}](${PR_URL})"
+            MESSAGE="💬 ${ACTOR} a commenté la PR : ${PR_LINK}"
           fi
 
           if [ -z "$WEBHOOK_URL" ]; then
