@@ -5,6 +5,8 @@ on:
     types: [opened, reopened, ready_for_review]
   pull_request_review:
     types: [submitted]
+  issue_comment:
+    types: [created]
 
 jobs:
   notify:
@@ -20,16 +22,17 @@ jobs:
           ACTOR="${{ github.github.event.actor }}"
           REVIEW_STATE="${{ github.event.review.state }}"
           REVIEWER="${{ github.event.review.user.login }}"
+          PR_LINK="[${PR_TITLE}](${PR_URL})"
 
           if [ "$EVENT_NAME" = "pull_request" ]; then
-            MESSAGE="Nouvelle PR ouverte par ${ACTOR} : [${PR_TITLE}](${PR_URL})"
+            MESSAGE="Nouvelle PR ouverte par ${ACTOR} : ${PR_LINK}"
           elif [ "$EVENT_NAME" = "pull_request_review" ]; then
             if [ "$REVIEW_STATE" = "approved" ]; then
-              MESSAGE="✅ ${REVIEWER} a approuvé la PR : [${PR_TITLE}](${PR_URL})"
+              MESSAGE="✅ ${REVIEWER} a approuvé la PR : ${PR_LINK}"
             elif [ "$REVIEW_STATE" = "changes_requested" ]; then
-              MESSAGE="⚠️ ${REVIEWER} a demandé des changements sur : [${PR_TITLE}](${PR_URL})"
+              MESSAGE="⚠️ ${REVIEWER} a demandé des changements sur : ${PR_LINK}"
             else
-              MESSAGE="💬 ${REVIEWER} a commenté la PR : [${PR_TITLE}](${PR_URL})"
+              MESSAGE="💬 ${REVIEWER} a commenté la PR : ${PR_LINK}"
             fi
           fi
 
