@@ -17,7 +17,7 @@ jobs:
           EVENT_NAME="${{ github.event_name }}"
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_URL="${{ github.event.pull_request.html_url }}"
-          ACTOR="${{ github.github.event.pull_request.user.login }}"
+          ACTOR="${{ github.github.event.actor }}"
           REVIEW_STATE="${{ github.event.review.state }}"
           REVIEWER="${{ github.event.review.user.login }}"
 
