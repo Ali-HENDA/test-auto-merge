@@ -14,7 +14,7 @@ workflows:
 jobs:
   build:
     docker:
-      - image: cimg/php:8.3
+      - image: cimg/php:8.4
     steps:
       - checkout
       - run: composer validate --no-check-publish -n
