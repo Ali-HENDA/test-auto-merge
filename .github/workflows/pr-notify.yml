@@ -42,7 +42,7 @@ jobs:
 
           case "$EVENT_NAME" in
             pull_request)
-              if [ "$PR_ACTION" = "opened" ]; then
+              if [ "$PR_ACTION" = "opened" ] || [ "$PR_ACTION" = "ready_for_review" ]; then
                 if [ "${{ github.event.pull_request.draft }}" = "true" ]; then
                   exit 0
                 fi
