@@ -3,7 +3,7 @@
   "require": {
     "monolog/monolog": "^2.0",
     "guzzlehttp/guzzle": "^7.0",
-    "nesbot/carbon": "^2.0",
+    "nesbot/carbon": "^3.11",
     "phpmailer/phpmailer": "^6.0",
     "fakerphp/faker": "^1.20",
     "ramsey/uuid": "^4.0",
