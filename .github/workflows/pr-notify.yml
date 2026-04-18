@@ -6,7 +6,7 @@ on:
       CHAT_WEBHOOK_URL:
         required: true
   pull_request:
-    types: [opened, review_requested]
+    types: [opened, review_requested, ready_for_review]
   pull_request_review:
     types: [submitted]
   issue_comment:
