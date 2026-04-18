@@ -1,8 +1,12 @@
 name: Notify Chat on PR Events
 
 on:
+  workflow_call:
+    secrets:
+      CHAT_WEBHOOK_URL:
+        required: true
   pull_request:
-    types: [opened, reopened, ready_for_review]
+    types: [opened, review_requested]
   pull_request_review:
     types: [submitted]
   issue_comment:
@@ -11,16 +15,15 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
-
+    if: ${{ github.actor != 'aa-delivery' }}
     steps:
       - name: Send message to Google Chat
         env:
           WEBHOOK_URL: ${{ secrets.CHAT_WEBHOOK_URL }}
         run: |
           EVENT_NAME="${{ github.event_name }}"
+          PR_ACTION="${{ github.event.action }}"
           ACTOR="${{ github.actor }}"
-          REVIEW_STATE="${{ github.event.review.state }}"
-          REVIEWER="${{ github.event.review.user.login }}"
           MESSAGE=""
 
           if [ "$EVENT_NAME" = "issue_comment" ]; then
@@ -39,10 +42,20 @@ jobs:
 
           case "$EVENT_NAME" in
             pull_request)
-              MESSAGE="Nouvelle PR ouverte par ${ACTOR} : ${PR_LINK}"
+              if [ "$PR_ACTION" = "opened" ]; then
+                if [ "${{ github.event.pull_request.draft }}" = "true" ]; then
+                  exit 0
+                fi
+                MESSAGE="Nouvelle PR ouverte par ${ACTOR} : ${PR_LINK}"
+              elif [ "$PR_ACTION" = "review_requested" ]; then
+                MESSAGE="🔄 ${ACTOR} demande une nouvelle review à : ${PR_LINK}"
+              fi
               ;;
 
             pull_request_review)
+              REVIEW_STATE="${{ github.event.review.state }}"
+              REVIEWER="${{ github.event.review.user.login }}"
+
               case "$REVIEW_STATE" in
                 approved)
                   MESSAGE="✅ ${REVIEWER} a approuvé la PR : ${PR_LINK}"
@@ -57,7 +70,13 @@ jobs:
               ;;
 
             issue_comment)
-              MESSAGE="💬 ${ACTOR} a commenté la PR : ${PR_LINK}"
+              PR_AUTHOR="${{ github.event.issue.user.login }}"
+
+              if [ "$ACTOR" = "$PR_AUTHOR" ]; then
+                MESSAGE="💬 ${ACTOR} a commenté sa propre PR : ${PR_LINK}"
+              else
+                MESSAGE="💬 ${ACTOR} a commenté la PR de ${PR_AUTHOR} : ${PR_LINK}"
+              fi
               ;;
           esac
 
